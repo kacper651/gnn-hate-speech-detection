@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# machine learning models (big stuff, don't wanna be pushing this to git)
+*.bin
+*.kv
+*.npy
