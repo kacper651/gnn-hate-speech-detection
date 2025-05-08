@@ -80,7 +80,7 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=2)
 
-    model = GRNClassifier(in_channels=384, hidden_channels=128, num_classes=2).to(device) # Adjust input size when changing embedder!!!!
+    model = GCNClassifier(in_channels=384, hidden_channels=128, num_classes=2).to(device) # Adjust input size when changing embedder!!!!
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     loss_fn = CrossEntropyLoss()
 
