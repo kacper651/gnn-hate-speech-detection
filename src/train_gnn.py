@@ -12,21 +12,8 @@ from embeddings.sbert import SBERTEmbedding
 
 from utils.graph_of_words import GraphOfWords
 from utils.graph_to_data import GraphToData
+from utils.dataset_wrapper import DatasetWrapper
 
-
-class TextGraphDataset(Dataset):
-    def __init__(self, texts, labels, text_to_graph):
-        self.texts = texts
-        self.labels = labels
-        self.text_to_graph = text_to_graph
-
-    def __len__(self):
-        return len(self.texts)
-
-    def __getitem__(self, idx):
-        data = self.text_to_graph(self.texts[idx])
-        data.y = torch.tensor(self.labels[idx], dtype=torch.long)
-        return data
 
 def train(model, loader, optimizer, loss_fn, device):
     model.train()
@@ -74,8 +61,8 @@ def main():
     text_to_graph = GraphToData(gow)
 
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.33, random_state=42)
-    train_dataset = TextGraphDataset(X_train, y_train, text_to_graph)
-    test_dataset = TextGraphDataset(X_test, y_test, text_to_graph)
+    train_dataset = DatasetWrapper(X_train, y_train, text_to_graph)
+    test_dataset = DatasetWrapper(X_test, y_test, text_to_graph)
 
     train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=2)
