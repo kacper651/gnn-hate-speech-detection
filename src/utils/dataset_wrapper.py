@@ -11,8 +11,6 @@ class DatasetWrapper(Dataset):
         return len(self.texts)
 
     def __getitem__(self, idx):
-        text = self.texts[idx]
-        label = self.labels[idx]
-        graph_data = self.text_to_graph(text)
-        graph_data.y = torch.tensor(label, dtype=torch.long)
-        return graph_data
+        data = self.text_to_graph(self.texts[idx])
+        data.y = torch.tensor(self.labels[idx], dtype=torch.long)
+        return data
