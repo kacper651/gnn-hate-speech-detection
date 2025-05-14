@@ -57,7 +57,7 @@ def main():
 
     w2v_embedder = Word2VecEmbedding("./models/google/GoogleNews-vectors-negative300.kv", device=device)
     sbert_embedder = SBERTEmbedding(device=device)
-    gow = GraphOfWords(embedding_model=sbert_embedder, window_size=2)
+    gow = GraphOfWords(embedding_model=w2v_embedder, window_size=2)
     text_to_graph = GraphToData(gow)
 
     X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.33, random_state=42)
@@ -67,7 +67,7 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=2)
 
-    model = GCNClassifier(in_channels=384, hidden_channels=128, num_classes=2).to(device) # Adjust input size when changing embedder!!!!
+    model = GCNClassifier(in_channels=300, hidden_channels=128, num_classes=2).to(device) # Adjust input size when changing embedder!!!!
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     loss_fn = CrossEntropyLoss()
 
