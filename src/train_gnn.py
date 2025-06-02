@@ -1,80 +1,32 @@
-import torch
-from torch.utils.data import Dataset
-from torch_geometric.loader import DataLoader
-from torch.nn import CrossEntropyLoss
-from sklearn.model_selection import train_test_split
-
-from GNNs.GCNClassifier import GCNClassifier
-from GNNs.GRNClassifier import GRNClassifier
-
-from embeddings.word2vec import Word2VecEmbedding
-from embeddings.sbert import SBERTEmbedding
-
-from utils.graph_of_words import GraphOfWords
-from utils.graph_to_data import GraphToData
-from utils.dataset_wrapper import DatasetWrapper
+import json
+from collections import Counter
+from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
 
-def train(model, loader, optimizer, loss_fn, device):
-    model.train()
-    total_loss = 0
-    for data in loader:
-        data = data.to(device)
-        optimizer.zero_grad()
-        out = model(data)
-        loss = loss_fn(out, data.y)
-        loss.backward()
-        optimizer.step()
-        total_loss += loss.item()
-    return total_loss / len(loader)
+encoder = LabelEncoder()
+encoder.classes_ = np.load('H:\dev\magisterka\gnn-hate-speech-detection\models\hateXplain\classes.npy', allow_pickle=True)
 
-def evaluate(model, loader, device):
-    model.eval()
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for data in loader:
-            data = data.to(device)
-            out = model(data)
-            pred = out.argmax(dim=1)
-            correct += (pred == data.y).sum().item()
-            total += data.y.size(0)
-    return correct / total
+with open('H:\dev\magisterka\gnn-hate-speech-detection\models\hateXplain/dataset.json', 'r', encoding='utf-8') as f:
+    raw_data = json.load(f)
 
-def main():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def get_majority_label(annotators):
+    labels = [a['label'] for a in annotators]
+    most_common = Counter(labels).most_common(1)
+    return most_common[0][0] if most_common else None
 
-    # TODO: Replace with HateXplain dataset
-    texts = [
-        "This is a hateful comment.",
-        "You are amazing!",
-        "Such a toxic attitude.",
-        "I love this movie.",
-        "You suck and should go away.",
-        "What a wonderful day!",
-    ]
-    labels = [1, 0, 1, 0, 1, 0]
+texts, labels = [], []
 
-    w2v_embedder = Word2VecEmbedding("./models/google/GoogleNews-vectors-negative300.kv", device=device)
-    sbert_embedder = SBERTEmbedding(device=device)
-    gow = GraphOfWords(embedding_model=w2v_embedder, window_size=2)
-    text_to_graph = GraphToData(gow)
+for post_id, post_data in raw_data.items():
+    majority_label = get_majority_label(post_data['annotators'])
+    if majority_label in encoder.classes_:
+        label_id = encoder.transform([majority_label])[0]
+        text = ' '.join(post_data['post_tokens']) 
+        texts.append(text)
+        labels.append(label_id)
 
-    X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.33, random_state=42)
-    train_dataset = DatasetWrapper(X_train, y_train, text_to_graph)
-    test_dataset = DatasetWrapper(X_test, y_test, text_to_graph)
+test_text = texts[:5]
 
-    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=2)
-
-    model = GCNClassifier(in_channels=300, hidden_channels=128, num_classes=2).to(device) # Adjust input size when changing embedder!!!!
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    loss_fn = CrossEntropyLoss()
-
-    for epoch in range(1, 11):
-        train_loss = train(model, train_loader, optimizer, loss_fn, device)
-        test_acc = evaluate(model, test_loader, device)
-        print(f"Epoch {epoch:02d} | Train Loss: {train_loss:.4f} | Test Acc: {test_acc:.2%}")
-
-if __name__ == "__main__":
-    main()
+for i in range(len(test_text)):
+    word_count = len(test_text[i].split())
+    print(f"Text {i+1} has {word_count} words.")
