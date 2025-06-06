@@ -178,8 +178,5 @@ cython_debug/
 *.kv
 *.npy
 
-# big output files
-output/
-
 # big model files
 models/
