@@ -1,4 +1,0 @@
-Embedding,Best F1,Best Accuracy,Best ROC-AUC
-w2v,0.7156,0.4914,1.0613
-glove,0.7425,0.5557,0.9762
-sbert,0.7698,0.5829,1.1237
