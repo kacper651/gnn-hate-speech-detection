@@ -180,3 +180,12 @@ cython_debug/
 
 # big model files
 models/
+
+# .csv
+*.csv
+
+# images
+*.jpg
+*.jpeg
+*.png
+*.eps
