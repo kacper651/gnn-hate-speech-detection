@@ -189,3 +189,9 @@ models/
 *.jpeg
 *.png
 *.eps
+
+# finetuned bert results
+notebooks/bertweet-results/
+notebooks/finetuned-allMiniLM-tweet3class/
+notebooks/finetuned-bertweet-tweet3class/
+
