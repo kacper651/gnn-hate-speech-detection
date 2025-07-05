@@ -1,19 +1,25 @@
-from torch.nn import Linear, ReLU, Module, Dropout
+from torch.nn import Linear, ReLU, Module, Dropout, BatchNorm1d
 from torch_geometric.nn import GCNConv, global_mean_pool
+
 
 class GCNClassifier(Module):
     def __init__(self, in_channels, hidden_channels, num_classes):
         super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.bn1 = BatchNorm1d(hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
+        self.bn2 = BatchNorm1d(hidden_channels)
+
         self.relu = ReLU()
-        self.lin = Linear(hidden_channels, num_classes)
         self.dropout = Dropout(p=0.5)
+
+        self.fc1 = Linear(hidden_channels, hidden_channels)
+        self.fc2 = Linear(hidden_channels, num_classes)
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
-        x = self.relu(self.conv1(x, edge_index))
-        x = self.relu(self.conv2(x, edge_index))
+        x = self.dropout(self.relu(self.bn1(self.conv1(x, edge_index))))
+        x = self.dropout(self.relu(self.bn2(self.conv2(x, edge_index))))
         x = global_mean_pool(x, batch)
-        x = self.dropout(x)
-        return self.lin(x)
+        x = self.dropout(self.relu(self.fc1(x)))
+        return self.fc2(x)
