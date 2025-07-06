@@ -190,8 +190,9 @@ models/
 *.png
 *.eps
 
-# finetuned bert results
+# finetuned bert results (wanna keep these only locally)
 notebooks/bertweet-results/
 notebooks/finetuned-allMiniLM-tweet3class/
 notebooks/finetuned-bertweet-tweet3class/
+src/results
 
