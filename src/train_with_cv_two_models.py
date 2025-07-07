@@ -103,7 +103,7 @@ for model_key, model_name in model_infos:
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_strategy="epoch",
-            load_best_model_at_end=False,
+            load_best_model_at_end=True,
             metric_for_best_model="eval_loss",
             greater_is_better=False,
             save_total_limit=1,
@@ -114,10 +114,7 @@ for model_key, model_name in model_infos:
             preds = np.argmax(probs, axis=1)
             return {
                 "accuracy": accuracy_score(p.label_ids, preds),
-                "f1": f1_score(p.label_ids, preds, average="macro"),
-                "roc_auc": roc_auc_score(
-                    p.label_ids, probs, multi_class="ovr", average="macro"
-                ),
+                "f1": f1_score(p.label_ids, preds, average="macro")
             }
 
         trainer = Trainer(
