@@ -48,8 +48,8 @@ pd.DataFrame({"text": texts, "label": labels}).to_csv(
 rskf = RepeatedStratifiedKFold(n_splits=5, n_repeats=2, random_state=42)
 
 model_infos = [
+    ("bertweet", "vinai/bertweet-base"),
     ("allminilm", "sentence-transformers/all-MiniLM-L6-v2"),
-    ("bertweet", "vinai/bertweet-base")
 ]
 
 results = []
@@ -62,8 +62,18 @@ for model_key, model_name in model_infos:
         train_labels = [labels[i] for i in train_idx]
         val_labels = [labels[i] for i in val_idx]
 
-        train_enc = tokenizer(train_texts, truncation=True, padding="max_length", max_length=128)
-        val_enc = tokenizer(val_texts, truncation=True, padding=True)
+        train_enc = (
+            tokenizer(
+                train_texts, truncation=True, padding="max_length", max_length=128
+            )
+            if model_key == "bertweet"
+            else tokenizer(train_texts, truncation=True, padding=True)
+        )
+        val_enc = (
+            tokenizer(val_texts, truncation=True, padding="max_length", max_length=128)
+            if model_key == "bertweet"
+            else tokenizer(val_texts, truncation=True, padding=True)
+        )
 
         class HSDataset(torch.utils.data.Dataset):
             def __init__(self, encodings, labels):
@@ -93,7 +103,7 @@ for model_key, model_name in model_infos:
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_strategy="epoch",
-            load_best_model_at_end=True,
+            load_best_model_at_end=False,
             metric_for_best_model="eval_loss",
             greater_is_better=False,
             save_total_limit=1,
@@ -156,4 +166,6 @@ for model_key, model_name in model_infos:
             }
         )
 
-pd.DataFrame(results).to_csv("../output/csv/reference/reference_results_two_models.csv", index=False)
+pd.DataFrame(results).to_csv(
+    "../output/csv/reference/reference_results_two_models.csv", index=False
+)
