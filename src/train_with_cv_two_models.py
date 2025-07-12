@@ -114,7 +114,10 @@ for model_key, model_name in model_infos:
             preds = np.argmax(probs, axis=1)
             return {
                 "accuracy": accuracy_score(p.label_ids, preds),
-                "f1": f1_score(p.label_ids, preds, average="macro")
+                "f1": f1_score(p.label_ids, preds, average="macro"),
+                "eval_roc_auc": roc_auc_score(
+                    p.label_ids, probs, multi_class="ovr", average="macro"
+                ),
             }
 
         trainer = Trainer(
