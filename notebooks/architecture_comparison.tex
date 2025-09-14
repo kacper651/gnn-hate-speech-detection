@@ -1,0 +1,15 @@
+\begin{table*}[h]
+
+    \centering
+    \caption{Average cross-validation results of models on the architecture_comparison task.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{ccccc}
+        \# & \textbf{Model} & \textbf{test_loss} & \textbf{test_acc} & \textbf{test_f1} \\ \hline 
+        \multirow{2}{*}{\textit{1}} & \multirow{2}{*}{\textsc{w2v_gcn}} & \textit{2} \cellcolor{{gray!10}} &  & \cellcolor{gray!10} \\
+        & & 0.513$\pm$0.027 \cellcolor{gray!10} & 0.478$\pm$0.069 & 0.708$\pm$0.025 \cellcolor{gray!10} \\ \hline
+        \multirow{2}{*}{\textit{2}} & \multirow{2}{*}{\textsc{w2v_gat}} & \cellcolor{gray!10} &  & \cellcolor{gray!10} \\
+        & & 0.444$\pm$0.040 \cellcolor{gray!10} & 0.411$\pm$0.075 & 0.688$\pm$0.021 \cellcolor{gray!10} \\ \hline
+    \end{tabular}%
+    }
+    \label{tab:architecture_comparison}
+\end{table*}

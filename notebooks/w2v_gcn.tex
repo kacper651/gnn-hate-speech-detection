@@ -1,0 +1,17 @@
+\begin{table*}[h]
+
+    \centering
+    \caption{Average cross-validation results of models on the w2v_gcn task.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{ccccc}
+        \# & \textbf{Model} & \textbf{test_loss} & \textbf{test_acc} & \textbf{test_f1} \\ \hline 
+        \multirow{2}{*}{\textit{1}} & \multirow{2}{*}{\textsc{w2v_gcn_2}} & \textit{2,3} \cellcolor{gray!10} & \textit{2,3} & \textit{2,3} \cellcolor{gray!10} \\
+        & & 0.513$\pm$0.027 \cellcolor{gray!10} & 0.478$\pm$0.069 & 0.708$\pm$0.025 \cellcolor{gray!10} \\ \hline
+        \multirow{2}{*}{\textit{2}} & \multirow{2}{*}{\textsc{w2v_gcn_3}} & \textit{3} \cellcolor{gray!10} &  & \textit{3} \cellcolor{gray!10} \\
+        & & 0.481$\pm$0.015 \cellcolor{gray!10} & 0.423$\pm$0.048 & 0.687$\pm$0.016 \cellcolor{gray!10} \\ \hline
+        \multirow{2}{*}{\textit{3}} & \multirow{2}{*}{\textsc{w2v_gcn_4}} & \cellcolor{gray!10} &  & \cellcolor{gray!10} \\
+        & & 0.459$\pm$0.020 \cellcolor{gray!10} & 0.398$\pm$0.053 & 0.657$\pm$0.021 \cellcolor{gray!10} \\ \hline
+    \end{tabular}%
+    }
+    \label{tab:w2v_gcn}
+\end{table*}
